@@ -1,0 +1,33 @@
+#!/usr/bin/env perl
+#
+# Summary: list all the core modules and their versions
+#
+# Usage: plenv list-core-modules 
+#
+# Show every core module that came with the currently selected Perl
+# version. Also display the version (if known) of each of those modules.
+# If the version is unknown the output will say <undef>.
+
+use strict;
+use warnings;
+
+use Module::CoreList;
+
+sub list_core_modules {
+  my %coremods = %{ $Module::CoreList::version{$]} };
+ 
+  my %all = map { $_ => { version => $coremods{ $_ } } } keys %coremods;
+
+  foreach my $mod (sort keys %all) {
+    my $dist = $all{ $mod };
+    my $version = $dist->{ version };
+    if( ! defined $version ) {
+      $version = '<undef>';
+    } else {
+      $version = 0 if( ! ref $version && $version eq '' );
+    }
+    printf "%s %s\n", $mod, $version;
+  }
+}
+
+list_core_modules();

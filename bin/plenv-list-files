@@ -1,13 +1,37 @@
 #!/usr/bin/env perl
+#
+# Summary: show all installed files in a particular distribution/s.
+#
+# Usage: plenv list-files [-f] <dist-name> ...
+#
+# -f|--fp       Show full path to each file instead of the truncated path.
+#               By default the path is relative to the currently selected
+#               Perl's directory.
+#
+# Show all installed files for the given distribution (or distributions).
+# Each distribution is listed, in the order given, followed by the list
+# of files installed for each distribution. By default paths are relative
+# to the currently selected Perl's directory. If -f is given the path is the 
+# absolute path to the file.
 
 use strict;
 use warnings;
 
+use File::Spec;
+use Getopt::Long;
 use ExtUtils::Installed;
 
 my $installed = ExtUtils::Installed->new( skip_cwd => 1 );
 
-die "You must provide the name of a module\n" unless @ARGV;
+my $p = 
+  Getopt::Long::Parser->new(
+    config => [qw(posix_default no_ignore_case pass_through permute bundling)]
+  );
+$p->getoptions(
+  'f|fp'      => \my $fullpath
+);
+
+die "You must provide the name of at least one module\n" unless @ARGV;
 
 sub module_is_installed {
   my( $installed, $inspect ) = @_;
@@ -18,10 +42,18 @@ sub module_is_installed {
   return 0;
 }
 
+my $prefix = `plenv prefix`;
+chomp $prefix;
 foreach my $inspect (@ARGV) {
   if( module_is_installed( $installed, $inspect ) ) {
     printf "%s:\n", $inspect;
-    printf( "  %s\n", $_) foreach sort $installed->files($inspect, 'all');
+    printf( "  %s\n", $_) 
+      foreach map { 
+                    $fullpath
+                    ? "$_"
+                    : File::Spec->abs2rel( $_, $prefix )
+                  } 
+              sort $installed->files( $inspect, 'all' );
   } else {
     warn sprintf "%s: module is not installed\n", $inspect;
   }

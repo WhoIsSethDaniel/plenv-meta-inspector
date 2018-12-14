@@ -1,0 +1,105 @@
+#!/usr/bin/env perl
+#
+# Summary: list all the CPAN modules and their versions
+#
+# Usage: plenv list-cpan-modules 
+#
+# Similar to the builtin 'list-modules' command, but this also shows
+# the version of each CPAN installed module. This command assumes 
+# the the modules were installed via cpanm (or similar) and that the
+# .meta directory exists and contains the install.json and MYMETA.json 
+# files.
+#
+# This will look not only with the current Perl's directory but also in
+# PERL5LIB.
+
+use strict;
+use warnings;
+
+use JSON::PP;
+use File::Find;
+
+sub all_module_dirs {
+  my $paths = 
+    defined $ENV{ PERL5LIB }
+    ? $ENV{ PERL5LIB }
+    : '';
+  
+  my $prefix = `plenv prefix`; 
+  chomp $prefix;
+  $paths = join( ':', $paths, $prefix );
+
+  my @dirs = grep { -d $_ } split /:/, $paths;
+  die "Can find no valid module directories in: $paths.\n" if ! @dirs;
+
+  return @dirs;
+}
+
+sub all_installed_cpan_modules {
+  my @dirs = all_module_dirs();
+
+  my %dists;
+  File::Find::find( 
+    sub { 
+      return unless /^install.json$/;
+      open my $ijh, '<', $_;
+      my $json;
+      {
+        local $/ = undef;
+        $json = <$ijh>
+      }
+
+      my $ij = JSON::PP->new->decode( $json );
+
+      my $target   = $ij->{ target };
+      my $name     = $ij->{ name };
+      my $distvers = $ij->{ version };
+      my $pathname = $ij->{ pathname };
+      my $provides = $ij->{ provides };
+
+      my $distname = exists $provides->{ $name } ? $name : $target;
+
+      if( exists $dists{ $distname } ) {
+        my $old = delete $dists{ $distname };
+        my $oldvers = version->parse( $old->{ version } );
+        my $newvers = version->parse( $distvers );
+        if( $oldvers > $newvers ) {
+          $dists{ $distname } = $old;
+          return;
+        }
+      }
+
+      $dists{ $distname } = {
+        pathname => $pathname,
+        version  => $distvers,
+        module   => $distname
+      };
+      return;
+    },
+    @dirs );
+
+  return sort { $a->{ module } cmp $b->{ module } } 
+         values %dists;
+}
+
+sub list_cpan_modules {
+  my @dists = all_installed_cpan_modules();
+ 
+  my %all;
+  foreach my $mod (@dists) {
+    $all{ $mod->{ module } } = $mod;
+  }
+
+  foreach my $mod (sort keys %all) {
+    my $dist = $all{ $mod };
+    my $version = $dist->{ version };
+    if( ! defined $version ) {
+      $version = '<undef>';
+    } else {
+      $version = 0 if( ! ref $version && $version eq '' );
+    }
+    printf "%s %s\n", $mod, $version;
+  }
+}
+
+list_cpan_modules();
