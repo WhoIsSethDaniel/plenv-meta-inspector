@@ -1,0 +1,28 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use ExtUtils::Installed;
+
+my $installed = ExtUtils::Installed->new( skip_cwd => 1 );
+
+die "You must provide the name of a module\n" unless @ARGV;
+
+sub module_is_installed {
+  my( $installed, $inspect ) = @_;
+  my @modules = $installed->modules;
+  foreach my $module (sort @modules) {
+    return 1 if $module eq $inspect;
+  }
+  return 0;
+}
+
+foreach my $inspect (@ARGV) {
+  if( module_is_installed( $installed, $inspect ) ) {
+    printf "%s:\n", $inspect;
+    printf( "  %s\n", $_) foreach sort $installed->files($inspect, 'all');
+  } else {
+    warn sprintf "%s: module is not installed\n", $inspect;
+  }
+}
