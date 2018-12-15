@@ -1,6 +1,6 @@
 # NAME
 
-plenv-meta-inspector - subcommands for plenv that provide inspection of modules and their details
+plenv-module-inspector - subcommands for plenv that provide inspection of modules and their details
 
 # SYNOPSIS
 
@@ -43,10 +43,10 @@ List all installed files for the given list of distributions.
 First, install [plenv](https://github.com/tokuhirom/plenv) if you have not 
 already done so.
 
-Second, checkout plenv-meta-inspector into your `~/.plenv/plugins`.
+Second, checkout plenv-module-inspector into your `~/.plenv/plugins`.
 
   ```sh
-  $ git clone https://github.com/whoissethdaniel/plenv-meta-inspector ~/.plenv/plugins/meta-inspector
+  $ git clone https://github.com/whoissethdaniel/plenv-module-inspector ~/.plenv/plugins/module-inspector
   ```
 
 That's it!
