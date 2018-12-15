@@ -7,8 +7,9 @@ plenv-module-inspector - subcommands for plenv that provide inspection of module
       # list all core modules and their versions for the current Perl
       plenv list-core-modules
 
-      # list all CPAN installed modules and their versions for the current Perl
-      plenv list-cpan-modules
+      # list all CPAN installed distributions and their versions for the 
+      # current Perl
+      plenv list-dists
 
       # list all files installed by the given distribution/s. (by default
       # the listed files are relative to the current Perl's directory.)
@@ -29,10 +30,11 @@ the modules that are installed in your current plenv environment.
 List all the core modules for the currently selected Perl as well the version
 of each module.
 
-### plenv list-cpan-modules
+### plenv list-dists
 
 Similar to the `list-modules` subcommand, but lists all the CPAN installed
-modules for the currently selected Perl as well as the version of each module.  
+distributions for the currently selected Perl as well as the version of each 
+distribution.
 
 ### plenv list-files
 

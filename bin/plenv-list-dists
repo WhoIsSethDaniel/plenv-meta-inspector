@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
 #
-# Summary: list all the CPAN modules and their versions
+# Summary: list all the CPAN installed distributions and their versions
 #
-# Usage: plenv list-cpan-modules 
+# Usage: plenv list-dists
 #
 # Similar to the builtin 'list-modules' command, but this also shows
-# the version of each CPAN installed module. This command assumes 
-# the the modules were installed via cpanm (or similar) and that the
+# the version of each CPAN installed distribution. This command assumes 
+# the the distributions were installed via cpanm (or similar) and that the
 # .meta directory exists and contains the install.json and MYMETA.json 
 # files.
 #
@@ -19,7 +19,7 @@ use warnings;
 use JSON::PP;
 use File::Find;
 
-sub all_module_dirs {
+sub all_dist_dirs {
   my $paths = 
     defined $ENV{ PERL5LIB }
     ? $ENV{ PERL5LIB }
@@ -35,8 +35,8 @@ sub all_module_dirs {
   return @dirs;
 }
 
-sub all_installed_cpan_modules {
-  my @dirs = all_module_dirs();
+sub all_installed_dists {
+  my @dirs = all_dist_dirs();
 
   my %dists;
   File::Find::find( 
@@ -82,8 +82,8 @@ sub all_installed_cpan_modules {
          values %dists;
 }
 
-sub list_cpan_modules {
-  my @dists = all_installed_cpan_modules();
+sub list_dists {
+  my @dists = all_installed_dists();
  
   my %all;
   foreach my $mod (@dists) {
@@ -102,4 +102,4 @@ sub list_cpan_modules {
   }
 }
 
-list_cpan_modules();
+list_dists();
