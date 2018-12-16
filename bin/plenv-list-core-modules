@@ -6,11 +6,12 @@
 #
 # Show every core module that came with the currently selected Perl
 # version. Also display the version (if known) of each of those modules.
-# If the version is unknown the output will say <undef>.
+# If the version is unknown the output will be '-'.
 
 use strict;
 use warnings;
 
+use version;
 use Module::CoreList;
 
 sub list_core_modules {
@@ -20,12 +21,9 @@ sub list_core_modules {
 
   foreach my $mod (sort keys %all) {
     my $dist = $all{ $mod };
-    my $version = $dist->{ version };
-    if( ! defined $version ) {
-      $version = '<undef>';
-    } else {
-      $version = 0 if( ! ref $version && $version eq '' );
-    }
+    my $version = version->parse( $dist->{ version } );
+    $version = '-' 
+      if( ! defined $version || ( ! ref $version && $version eq '' ) );
     printf "%s %s\n", $mod, $version;
   }
 }

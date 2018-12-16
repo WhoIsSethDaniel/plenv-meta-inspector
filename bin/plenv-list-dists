@@ -4,11 +4,10 @@
 #
 # Usage: plenv list-dists
 #
-# Similar to the builtin 'list-modules' command, but this also shows
-# the version of each CPAN installed distribution. This command assumes 
-# the the distributions were installed via cpanm (or similar) and that the
-# .meta directory exists and contains the install.json and MYMETA.json 
-# files.
+# Similar to the builtin 'list-modules' command, but this also shows the
+# version of each CPAN installed distribution. This command assumes the
+# distributions were installed via cpanm (or similar) and that the .meta
+# directory exists and contains the install.json and MYMETA.json files.
 #
 # This will look not only with the current Perl's directory but also in
 # PERL5LIB.
@@ -92,12 +91,9 @@ sub list_dists {
 
   foreach my $mod (sort keys %all) {
     my $dist = $all{ $mod };
-    my $version = $dist->{ version };
-    if( ! defined $version ) {
-      $version = '<undef>';
-    } else {
-      $version = 0 if( ! ref $version && $version eq '' );
-    }
+    my $version = version->parse( $dist->{ version } );
+    $version = '-' 
+      if( ! defined $version || ( ! ref $version && $version eq '' ) );
     printf "%s %s\n", $mod, $version;
   }
 }
