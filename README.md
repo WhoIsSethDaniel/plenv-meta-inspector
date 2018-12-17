@@ -63,3 +63,23 @@ Second, checkout plenv-module-inspector into your `~/.plenv/plugins`.
   ```
 
 That's it!
+
+# BUG REPORTING
+
+Use Github issues: https://github.com/WhoIsSethDaniel/plenv-module-inspector/issues
+
+# AUTHOR
+
+Seth Daniel <perl @ sethdaniel.org>
+
+# SEE ALSO
+
+[plenv](https://github.com/tokuhirom/plenv)
+
+[ExtUtils::Installed](https://metacpan.org/pod/ExtUtils::Installed)
+
+# LICENSE
+
+None. Use it as you see fit.  
+
+If you change it please consider submitting a patch.
