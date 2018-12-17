@@ -17,8 +17,7 @@
 # and that the .meta directory exists and contains the install.json and
 # MYMETA.json files.
 #
-# This will look not only look in the current Perl's directory but also in
-# PERL5LIB.
+# This will look for all files within @INC.
 
 use strict;
 use warnings;
@@ -36,25 +35,7 @@ $p->getoptions(
   'a|all'      => \my $all
 );
 
-sub all_dist_dirs {
-  my $paths = 
-    defined $ENV{ PERL5LIB }
-    ? $ENV{ PERL5LIB }
-    : '';
-  
-  my $prefix = `plenv prefix`; 
-  chomp $prefix;
-  $paths = join( ':', $paths, $prefix );
-
-  my @dirs = grep { -d $_ } split /:/, $paths;
-  die "Can find no valid module directories in: $paths.\n" if ! @dirs;
-
-  return @dirs;
-}
-
 sub all_installed_dists {
-  my @dirs = all_dist_dirs();
-
   my %dists;
   File::Find::find( 
     sub { 
@@ -94,7 +75,7 @@ sub all_installed_dists {
       };
       return;
     },
-    @dirs );
+    @INC );
 
   return sort { $a->{ module } cmp $b->{ module } } 
          values %dists;
