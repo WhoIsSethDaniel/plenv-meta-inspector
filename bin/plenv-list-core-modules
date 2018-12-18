@@ -4,9 +4,11 @@
 #
 # Usage: plenv list-core-modules 
 #
-# Show every core module that came with the currently selected Perl
-# version. Also display the version (if known) of each of those modules.
-# If the version is unknown the output will be '-'.
+# Show every core module that came with the currently selected Perl version.
+# Also display the version (if known) of each of those modules.  If the version
+# is unknown the output will be '-'.
+#
+# This is roughly the equivalent to 'corelist -v $(plenv version-name)'.
 
 use strict;
 use warnings;

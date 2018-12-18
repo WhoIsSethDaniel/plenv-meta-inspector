@@ -37,6 +37,8 @@ the modules that are installed in your current plenv environment.
 List all the core modules for the currently selected Perl as well the version
 of each module.
 
+This is roughly the equivalent to `corelist -v $(plenv version-name)`.
+
 ### plenv list-dists
 
 Similar to the `list-modules` subcommand, but lists all the CPAN installed
