@@ -1,0 +1,52 @@
+#!/usr/bin/env perl
+#
+# Summary: list all the available perl releases (according to CPAN::Perl::Releases)
+#
+# Usage: plenv list-perl-releases [-uv]
+#
+# -u|--update   Update (or install) CPAN::Perl::Releases before printing
+#               the list of Perl releases.
+# -v|--verbose  Be very verbose about what is going on. Useful for debugging
+#               problems when running this command.
+#
+# Show every available Perl release. This requires the installation of
+# CPAN::Perl::Releases. If that module is not installed the listing will fail.
+# If that module is out-of-date the list of Perl releases will be out-of-date.
+#
+# To install CPAN::Perl::Releases you can run the following command:
+#
+# $ cpanm CPAN::Perl::Releases
+# 
+# You can also run the sub-command with the -u option and it will install
+# and/or update CPAN::Perl::Releases for you.
+
+use strict;
+use warnings;
+
+use Getopt::Long;
+
+my $p = 
+  Getopt::Long::Parser->new(
+    config => [qw(posix_default no_ignore_case pass_through permute bundling)]
+  );
+$p->getoptions(
+  'u|update'      => \my $update,
+  'v|verbose'     => \my $verbose
+);
+
+if( $update ) {
+  my $up_cpr = `cpanm CPAN::Perl::Releases`;
+  print "$up_cpr\n" if $verbose;
+}
+
+eval { require CPAN::Perl::Releases; };
+if( $@ ) {
+  print "Attempt to load CPAN::Perl::Releases failed:\n$@\n" if $verbose;
+  die "For this sub-command to work you must install CPAN::Perl::Releases.\n" .
+      "You can do this by running the following command:\n\n" .
+      "\$ cpanm CPAN::Perl::Releases\n\n" .
+      "or you can run the sub-command with the -u option\n\n" .
+      "\$ plenv list-perl-releases -u\n\n";
+}
+
+print "$_\n" foreach CPAN::Perl::Releases::perl_versions();
