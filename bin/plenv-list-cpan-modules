@@ -4,7 +4,7 @@
 #
 # Usage: plenv list-cpan-modules [-a]
 #
-# -a|--all      Show the distribution name and the (relative) file path to to
+# -a|--all      Show the distribution name and the (relative) file path to
 #               the module.
 #
 # Similar to the builtin 'list-modules' command, but this will list *all*
