@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# Summary: upgrade all installed dists to the most recent vesion.
+#
+# Usage: plenv upgrade-all-dists
+#
+# This assumes cpanm has already been installed via
+#
+# $ plenv install-cpanm
+
+plenv which cpanm >/dev/null 2>&1
+[[ "$?" -ne 0 ]] && {
+  echo -e "cpanm is not installed. You need to install cpanm via:\n"
+  echo -e "$ plenv install-cpanm\n"
+  exit 1
+}
+
+cpanm $(plenv list-dists | cut -d\  -f1)

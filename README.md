@@ -25,6 +25,9 @@ plenv-module-inspector - subcommands for plenv that provide inspection of module
       # list absolute paths to files installed by the given distribution/s
       plenv list-files -f Moo
 
+      # upgrade all dists for the currently selected Perl
+      plenv upgrade-all-dists
+
       # list all available Perl releases
       plenv list-perl-releases
 
@@ -59,6 +62,10 @@ List all CPAN installed modules plus their versions.
 ### plenv list-files
 
 List all installed files for the given list of distributions.  
+
+### plenv upgrade-all-dists
+
+Upgrade all distributions for the currently selected Perl.
 
 ### plenv list-perl-releases
 
