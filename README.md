@@ -28,6 +28,9 @@ plenv-module-inspector - subcommands for plenv that provide inspection of module
       # upgrade all dists for the currently selected Perl
       plenv upgrade-all-dists
 
+      # upgrade all dists; do not run any tests
+      plenv upgrade-all-dists -n
+
       # list all available Perl releases
       plenv list-perl-releases
 

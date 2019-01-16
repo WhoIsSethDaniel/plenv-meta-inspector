@@ -3,10 +3,18 @@
 # Summary: upgrade all installed dists to the most recent vesion.
 #
 # Usage: plenv upgrade-all-dists
+# 
+# -n            Do not run tests when installing via cpanm. 
+#
+# Upgrade all installed dists to the most recent version.
 #
 # This assumes cpanm has already been installed via
 #
 # $ plenv install-cpanm
+
+if [ "$1" == "-n" ] ; then
+  notest="--notest"
+fi
 
 plenv which cpanm >/dev/null 2>&1
 [[ "$?" -ne 0 ]] && {
@@ -15,4 +23,4 @@ plenv which cpanm >/dev/null 2>&1
   exit 1
 }
 
-cpanm $(plenv list-dists | cut -d\  -f1)
+cpanm $notest $(plenv list-dists | cut -d\  -f1)
