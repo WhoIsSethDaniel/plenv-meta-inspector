@@ -34,9 +34,9 @@ plenv-module-inspector - subcommands for plenv that provide inspection of module
       # list all available Perl releases
       plenv list-perl-releases
 
-      # install or update the CPAN::Perl::Releases module and then
-      # list all available Perl releases
-      plenv list-perl-releases -u
+      # list all available Perl releases, but suppress the update/install
+      # of the CPAN::Perl::Releases module
+      plenv list-perl-releases -n
 
 # DESCRIPTION
 
