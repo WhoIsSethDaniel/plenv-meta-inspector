@@ -38,6 +38,10 @@ plenv-module-inspector - subcommands for plenv that provide inspection of module
       # of the CPAN::Perl::Releases module
       plenv list-perl-releases -n
 
+      # list all the (possible) names for the distribution associated with
+      # the given module
+      plenv find-dist LWP
+
 # DESCRIPTION
 
 Adds several new subcommands to plenv that help with inspecting details of
@@ -73,6 +77,10 @@ Upgrade all distributions for the currently selected Perl.
 ### plenv list-perl-releases
 
 List all available Perl releases.
+
+### plenv find-dist
+
+Find the distribution name for a given module.
 
 # INSTALLATION
 

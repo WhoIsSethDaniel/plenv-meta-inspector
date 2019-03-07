@@ -1,0 +1,93 @@
+#!/usr/bin/env perl
+#
+# Summary: given a module find the possible names for the dist for that module
+#
+# Usage: plenv find-dist <module name>
+# 
+# Given a module attempt to find the name of the distribution that contains
+# that module. The command may list more than one name if multiple different
+# names are listed in the metadata associated with the module.
+#
+# This command assumes the distributions were installed via cpanm (or similar)
+# and that the .meta directory exists and contains the install.json and
+# MYMETA.json files.
+#
+# This will look for all files within @INC.
+
+use strict;
+use warnings;
+
+use version;
+use JSON::PP;
+use File::Find;
+use Getopt::Long;
+
+my %possible_names;
+
+sub parse_install_json {
+  my( $module, $json ) = @_;
+
+  my $target   = $json->{ target };
+  my $name     = $json->{ name };
+  my $provides = $json->{ provides };
+
+  foreach my $prov (keys %$provides) {
+    if( $prov eq $module ) {
+      $possible_names{ $name   } = 1;
+      $possible_names{ $target } = 1;
+      return;
+    }
+  }
+
+  return;
+}
+
+sub parse_mymeta_json {
+  my( $module, $json ) = @_;
+
+  my $name     = $json->{ name };
+  my $provides = $json->{ provides };
+
+  foreach my $prov (keys %$provides) {
+    if( $prov eq $module ) {
+      $possible_names{ $name } = 1;
+      return;
+    }
+  }
+
+  return;
+}
+
+sub find_possible_names {
+  my( $module ) = @_;
+  File::Find::find( 
+    sub { 
+      my $type;
+      $type = 'install' if /^install.json$/;
+      $type = 'meta'    if /^MYMETA.json$/;
+      return            if ! defined $type;
+
+      open my $ijh, '<', $_;
+      my $c;
+      {
+        local $/ = undef;
+        $c = <$ijh>
+      }
+      my $json = JSON::PP->new->decode( $c );
+
+      parse_install_json($module,$json) if $type eq 'install';
+      parse_mymeta_json($module,$json)  if $type eq 'meta';
+
+      return;
+    },
+    @INC );
+}
+
+die "You must supply the name of a module as the first argument\n"
+  if ! @ARGV;
+die "You can only give the name of a single module\n"
+  if scalar @ARGV > 1;
+
+my $module = $ARGV[0]; 
+find_possible_names($module);
+print join( ' ', sort keys %possible_names ) . "\n";
