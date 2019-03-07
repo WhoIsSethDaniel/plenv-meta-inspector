@@ -25,11 +25,11 @@ plenv-module-inspector - subcommands for plenv that provide inspection of module
       # list absolute paths to files installed by the given distribution/s
       plenv list-files -f Moo
 
-      # upgrade all dists for the currently selected Perl
+      # upgrade all non-core dists for the currently selected Perl
       plenv upgrade-all-dists
 
-      # upgrade all dists; do not run any tests
-      plenv upgrade-all-dists -n
+      # upgrade all dists (including core); run tests before installing
+      plenv upgrade-all-dists -c -t 
 
       # list all available Perl releases
       plenv list-perl-releases

@@ -1,10 +1,15 @@
-#!/usr/bin/env bash
+#!/usr/bin/env perl
 #
 # Summary: upgrade all installed dists to the most recent vesion.
 #
 # Usage: plenv upgrade-all-dists
 # 
-# -n            Do not run tests when installing via cpanm. 
+# -n            Suppress the update (or install) of App::cpanoutdated. By
+#               default an update/install is attempted every time.
+# -c            Upgrade core modules, also (default: do not include core mods)
+# -t            Run tests before installing modules (default: do not run tests)
+# -v|--verbose  Be very verbose about what is going on. Useful for debugging
+#               problems when running this command.
 #
 # Upgrade all installed dists to the most recent version.
 #
@@ -12,15 +17,39 @@
 #
 # $ plenv install-cpanm
 
-if [ "$1" == "-n" ] ; then
-  notest="--notest"
-fi
+use strict;
+use warnings;
 
-plenv which cpanm >/dev/null 2>&1
-[[ "$?" -ne 0 ]] && {
-  echo -e "cpanm is not installed. You need to install cpanm via:\n"
-  echo -e "$ plenv install-cpanm\n"
-  exit 1
+use Getopt::Long;
+
+my $p = 
+  Getopt::Long::Parser->new(
+    config => [qw(posix_default no_ignore_case pass_through permute bundling)]
+  );
+$p->getoptions(
+  'n'             => \my $noupdate,
+  't'             => \my $dotests,
+  'c'             => \my $docore,
+  'v|verbose'     => \my $verbose
+);
+
+unless( $noupdate ) {
+  my $up_cpr = `cpanm App::cpanoutdated`;
+  print "$up_cpr\n" if $verbose;
 }
 
-cpanm $notest $(plenv list-dists | cut -d\  -f1)
+eval { require App::cpanoutdated; };
+if( $@ ) {
+  print "Attempt to load App::cpanoutdated failed:\n$@\n" if $verbose;
+  die "For this sub-command to work you must install App::cpanoutdated.\n" .
+      "You can do this by running the following command:\n\n" .
+      "\$ cpanm App::cpanoutdated\n\n";
+}
+
+my $cmd = sprintf( 'cpan-outdated %s | cpanm %s',
+                    ($docore ? '' : '--exclude-core'),
+                    join( ' ', ($dotests ? '--no-notest' : '--notest'),
+                               ($verbose ? '' : '--quiet')
+                        ) );
+print "$cmd\n" if $verbose;
+system($cmd);
